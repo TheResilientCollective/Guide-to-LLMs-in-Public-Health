@@ -1,11 +1,8 @@
 %%{
   init: {
-    "theme": "light"
-    "fontFamily": "monospace",
-    "htmlLabels": true,
-    "logLevel": "debug",
+    "theme": "redux-color",
     "flowchart": {
-        "curve": "linear"
+      "curve": "stepBefore"
     }
   }
 }%%
@@ -33,21 +30,19 @@ flowchart TD
 
 
     host(You should run LLMs yourself)
-        host.local(You and other employees can use Ollama) --> ollama.laptop.download
+        host.local("<a target='_blank' href='./Running Ollama on a Laptop.md'>You and other employees can use Ollama</a>") --> ollama.laptop.download
         host.machine(Purchase a designated computer to run the LLMs and keep on your office network.)
-            host.machine.ollama(Host Ollama on a Server) --- ollama.server
-            host.machine.vllm(Host vLLM on a Server) --- vllm.server
-            host.machine.k8s(Host our custom deployment on your own machines) -->
-                host.machine.k8s.purchase(You will want to purchase several GPU machines for this. TODO link out to graph of machines)
-                host.machine.k8s.purchase -->
-                host.machine.k8s.network(Put all of the machines on the same network. TODO create help text for this)
-                host.machine.k8s.network --> k8s
+            host.machine.ollama("<a target='_blank' href='./Running Ollama on a Server.md'>Host Ollama on a Server. Click here for more info.</a>") --- ollama.server
+            host.machine.vllm("<a target='_blank' href='./Running vLLM on a Server.md'>Host vLLM on a Server. Click here for more info.</a>") --- vllm.server
+            host.machine.k8s("<a target='_blank' href='./Running the Kubernetes Stack.md'>Host our custom deployment on your own machines</a>") -->
+                host.machine.k8s.purchase("<a target='_blank' href='./Running the Kubernetes Stack.md'>You will want to purchase several GPU machines for this.</a>") -->
+                host.machine.k8s.network("<a target='_blank' href='./Running the Kubernetes Stack.md'>Put all of the machines on the same network.</a>") --> k8s
             host.machine --- host.machine.ollama
             host.machine --- host.machine.vllm
-        host.cloud(Create a new server in your cloud... TODO)
-            host.cloud.ollama(Host Ollama in the Cloud) --- ollama.server
-            host.cloud.vllm(Host vLLM in the Cloud) --- vllm.server
-            host.cloud.k8s(Use our custom Kubernetes... TODO)
+        host.cloud("<a target='_blank' href='./Running Ollama in the Cloud.md'>Create a new server in your cloud</a>")
+            host.cloud.ollama("<a target='_blank' href='./Running Ollama in the Cloud.md'>Host Ollama in the Cloud. Click here for more info.</a>") --- ollama.server
+            host.cloud.vllm("<a target='_blank' href='./Running vLLM on a Server.md'>Host vLLM in the Cloud. Click here for more info.</a>") --- vllm.server
+            host.cloud.k8s("<a target='_blank' href='./Running the Kubernetes Stack.md'>We have built out template infrastructure that you can use.</a>") 
 
         host.non-local(You will want to host your LLMs somewhere)
         host.non-local -->
@@ -163,19 +158,19 @@ flowchart TD
             You will then connect that LLM to some tools to help it do things (e.g. edit a word document). That list of tools can change over time very easily.
             TODO
         "}
-        ollama.laptop.download("Download Ollama from https://ollama.com/download - you may need to click 'Download Manually'")
+        ollama.laptop.download("<a target='_blank' href='./Running Ollama on a Laptop.md'>Download Ollama from https://ollama.com/download - you may need to click 'Download Manually'.<br>For the full walkthrough see the guide.</a>")
 
-        ollama.server(Ollama is very easy to setup on a server)
+        ollama.server("<a target='_blank' href='./Running Ollama on a Server.md'>Ollama is very easy to setup on a server.</a>")
     end
 
 
     subgraph Setting up vLLM on a server
-        vllm.server(vLLM handles multiple LLM requests well, but has some limitations and is harder to setup.)
+        vllm.server("<a target='_blank' href='./Running vLLM on a Server.md'>vLLM handles multiple LLM requests well, but has some limitations and is harder to setup.</a>")
     end
 
 
     subgraph Setting up our custom LLM infrastructure
-        k8s
+        k8s("<a target='_blank' href='./Running the Kubernetes Stack.md'>See the Kubernetes guide.</a>")
     end
 
 
