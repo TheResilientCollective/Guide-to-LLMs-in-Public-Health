@@ -1,0 +1,181 @@
+%%{
+  init: {
+    "theme": "light"
+    "fontFamily": "monospace",
+    "htmlLabels": true,
+    "logLevel": "debug",
+    "flowchart": {
+        "curve": "linear"
+    }
+  }
+}%%
+
+
+flowchart TD
+
+    is-local{"How do you intend to use LLMs?"}
+    %% Are you only using LLMs to process local files? Or would you like to use in workflows ?"}
+    is-local -- People talk to a chatbot, get information, ask questions about files, generate reports --> workflow.employees-have-beefy-laptops
+    is-local -- LLMs will automate workflows like data processing and file conversion -->
+        workflow.type{"Do you want the workflows to run automatically?<br>(e.g. CDC updates data on their website about COVID cases and the workflow automatically grabs the updates and starts processing them)"}
+        workflow.type -- yes, automatically --> security.data-type
+        workflow.type -- no, a human will always trigger and monitor a workflow -->
+            workflow.exists{"Do you already have automated workflows?"}
+            workflow.exists -- no --> workflow.employees-have-beefy-laptops
+            workflow.exists -- yes -->
+                workflow.is-local{Is your workflow code running on your computer or on a server?}
+                workflow.is-local -- on my computer --> workflow.employees-have-beefy-laptops
+                workflow.is-local -- on a server --> security.data-type
+
+        workflow.employees-have-beefy-laptops{"Do employees have powerful computers they work on?"}
+            workflow.employees-have-beefy-laptops -- yes --> host.local
+            workflow.employees-have-beefy-laptops -- no --> security.data-type
+
+
+    host(You should run LLMs yourself)
+        host.local(You and other employees can use Ollama) --> ollama.laptop.download
+        host.machine(Purchase a designated computer to run the LLMs and keep on your office network.)
+            host.machine.ollama(Host Ollama on a Server) --- ollama.server
+            host.machine.vllm(Host vLLM on a Server) --- vllm.server
+            host.machine.k8s(Host our custom deployment on your own machines) -->
+                host.machine.k8s.purchase(You will want to purchase several GPU machines for this. TODO link out to graph of machines)
+                host.machine.k8s.purchase -->
+                host.machine.k8s.network(Put all of the machines on the same network. TODO create help text for this)
+                host.machine.k8s.network --> k8s
+            host.machine --- host.machine.ollama
+            host.machine --- host.machine.vllm
+        host.cloud(Create a new server in your cloud... TODO)
+            host.cloud.ollama(Host Ollama in the Cloud) --- ollama.server
+            host.cloud.vllm(Host vLLM in the Cloud) --- vllm.server
+            host.cloud.k8s(Use our custom Kubernetes... TODO)
+
+        host.non-local(You will want to host your LLMs somewhere)
+        host.non-local -->
+        host.usage{How many people will be using LLMs?}
+        host.usage -- less than 3 or sporadic usage -->
+            host.usage.low(You won't need a lot of new infrastructure to make this happen.) -->
+            host.usage.low.csp.selfhost{"Do you have your own servers? TODO: make single name for this"}
+            host.usage.low.csp.selfhost -.- csp.selfhost
+            host.usage.low.csp.selfhost -- yes --> host.machine
+            host.usage.low.csp.selfhost -- no -->
+                host.usage.low.experiment{Are you looking to experiment first?}
+                host.usage.low.experiment -- experiment for a couple months --> host.cloud
+                host.usage.low.experiment -- I suspect we will use this long term --> host.machine
+        host.usage -- less than 10 people or consistent usage -->
+            host.usage.medium(You are right between two different sizing strategies) -->
+            host.usage.medium.csp.selfhost{"Do you have your own servers? TODO: make single name for this"}
+            host.usage.medium.csp.selfhost -.- csp.selfhost
+            host.usage.medium.csp.selfhost -- yes --> host.machine.vllm
+            host.usage.medium.csp.selfhost -- no --> host.cloud.vllm
+        host.usage -- more than 10 people or constant usage -->
+            host.usage.high(You will need quite a bit of infrastructure to make this happen)
+            host.usage.hight.csp.selfhost{"Do you have your own servers? TODO: make single name for this"}
+            host.usage.hight.csp.selfhost -.- csp.selfhost
+            host.usage.hight.csp.selfhost -- yes --> host.machine.k8s
+            host.usage.hight.csp.selfhost -- no --> host.cloud.k8s
+        host.usage -- not sure, we are a very small jurisdiction -->
+            host.usage.small
+        host.usage -- not sure, we are a small jurisdiction -->
+            host.usage.medium
+        host.usage -- not sure, we are a large jurisdiction -->
+            host.usage.high
+
+    use(You should just use existing infrastructure)
+    use -.- use.openai
+    use -.- use.anthropic
+    use -.- gemini
+    use --- other --->
+    use --- cloud
+        use.openai(OpenAI)
+        use.anthropic(Anthropic)
+        use.gemini(Google Gemini)
+        use.other(Other AI Provider)
+        use.cloud(You should just use a resource from your cloud service provider)
+        use.cloud --- use.cloud.azure
+        use.cloud --- use.cloud.gcp
+        use.cloud --- use.cloud.aws
+        use.cloud --- use.cloud.other
+            use.cloud.azure(Use Microsoft Foundry in Azure)
+            use.cloud.gcp(Use Vertex AI on Google Cloud Platform)
+            use.cloud.aws(Use Amazon Bedrock on Amazon Web Services)
+            use.cloud.other("Use a Cloud Provider like Linode, Digital Ocean, Oracle, IBM, etc.")
+
+
+    subgraph Cloud Service Provider
+        csp.note@{ shape: comment, label: "
+        We need to figure out who your Cloud Service Provider is.
+        This is who manages things like servers, VPNs, and other services you may use.
+        The definitive way to determine this is to ask someone from IT.
+        You probably are using Azure or AWS.
+        " }
+
+        csp.it-access{Can you just ask someone from IT?}
+            -- yes --> csp.it-access.message("Go ask them what your 'Cloud Service Provider' is? They will probably answer with Azure/AWS/GCP/other or tell you everything is self hosted.")
+        csp.it-access -- no --> csp.workspace{Do you use or see any of the following?}
+            csp.other("For instructions in other flowcharts, follow the 'Other CSP' instructions.")
+            csp.workspace
+                -- Microsoft Office / Sharepoint --> csp.azure("`You probably use **Microsoft Azure**`")
+            csp.workspace
+                -- "Google Workspace<br>(not just gmail)" --> csp.gcp("`You probably use **Google Cloud Platform (GCP)**`")
+            csp.workspace
+                -- "You use Oracle products" --> csp.oracle("`You probably use **Oracle Cloud**`") --> csp.other
+            csp.workspace
+                -- "You have a server room or a physical server somewhere" --> csp.selfhost("`You run your own infrastructure. For instructions in other flowcharts, follow the 'Self Hosting' instructions.`")
+            csp.workspace
+                -- "You've heard IT people say words like 'AWS', 'EC2', 'S3'" --> csp.aws("`You probably use **Amazon Web Services (AWS)**.`")
+            csp.workspace
+                -- You've heard IT people say 'Digital Ocean' --> csp.digital-ocean("`You probably use **Digital Ocean**`")
+                --> csp.other
+            csp.workspace
+                -- You've heard IT people say 'Akamai' or 'Linode' --> csp.linode("`You probably use **Linode**`")
+                --> csp.other
+            csp.workspace
+                -- "None of the other options" --> csp.unknown("`It's not clear who your provider is. You can still look through the other flowcharts, just know the final recommendation may be inaccurate.`")
+                --> csp.aws
+    end
+
+
+    subgraph Security
+        security.data-type{What kind of data will you be working with or is likely to be used by others}
+            security.data-type -- HIPAA --> security.trust
+            security.data-type -- PII or other sensitive data --> security.trust
+            security.data-type -- Public Data --> use
+
+        security.trust{When it comes to a data breach, which matters more?}
+        security.trust -- not being liable --> use
+        security.trust -- not sure --> host.non-local
+        security.trust -- minimizing harm --> host.non-local
+    end
+
+
+    subgraph Setting up Ollama on your Computer
+        ollama.laptop.note.liability@{ shape: comment, label: "
+            You are liable for your actions.
+        "}
+        ollama.laptop.note.security@{ shape: comment, label: "
+            Security
+            This is the simplest and a very secure approach with restrictions...
+            TODO
+        "}
+        ollama.laptop.note.tooling@{ shape: comment, label: "
+            The general idea is you will have an LLM running on your computer.
+            It will only be able to do what the logged in user has permission to do - and the user will be responsible for its actions.
+            You will then connect that LLM to some tools to help it do things (e.g. edit a word document). That list of tools can change over time very easily.
+            TODO
+        "}
+        ollama.laptop.download("Download Ollama from https://ollama.com/download - you may need to click 'Download Manually'")
+
+        ollama.server(Ollama is very easy to setup on a server)
+    end
+
+
+    subgraph Setting up vLLM on a server
+        vllm.server(vLLM handles multiple LLM requests well, but has some limitations and is harder to setup.)
+    end
+
+
+    subgraph Setting up our custom LLM infrastructure
+        k8s
+    end
+
+
