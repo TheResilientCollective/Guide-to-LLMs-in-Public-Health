@@ -30,19 +30,19 @@ flowchart TD
 
 
     host(You should run LLMs yourself)
-        host.local("<a target='_blank' href='./Running Ollama on a Laptop.md'>You and other employees can use Ollama</a>") --> ollama.laptop.download
+        host.local("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20on%20a%20Laptop.md'>You and other employees can use Ollama</a>") --> ollama.laptop.download
         host.machine(Purchase a designated computer to run the LLMs and keep on your office network.)
-            host.machine.ollama("<a target='_blank' href='./Running Ollama on a Server.md'>Host Ollama on a Server. Click here for more info.</a>") --- ollama.server
-            host.machine.vllm("<a target='_blank' href='./Running vLLM on a Server.md'>Host vLLM on a Server. Click here for more info.</a>") --- vllm.server
-            host.machine.k8s("<a target='_blank' href='./Running the Kubernetes Stack.md'>Host our custom deployment on your own machines</a>") -->
-                host.machine.k8s.purchase("<a target='_blank' href='./Running the Kubernetes Stack.md'>You will want to purchase several GPU machines for this.</a>") -->
-                host.machine.k8s.network("<a target='_blank' href='./Running the Kubernetes Stack.md'>Put all of the machines on the same network.</a>") --> k8s
+            host.machine.ollama("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20on%20a%20Server.md'>Host Ollama on a Server. Click here for more info.</a>") --- ollama.server
+            host.machine.vllm("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20vLLM%20on%20a%20Server.md'>Host vLLM on a Server. Click here for more info.</a>") --- vllm.server
+            host.machine.k8s("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>Host our custom deployment on your own machines</a>") -->
+                host.machine.k8s.purchase("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>You will want to purchase several GPU machines for this.</a>") -->
+                host.machine.k8s.network("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>Put all of the machines on the same network.</a>") --> k8s
             host.machine --- host.machine.ollama
             host.machine --- host.machine.vllm
-        host.cloud("<a target='_blank' href='./Running Ollama in the Cloud.md'>Create a new server in your cloud</a>")
-            host.cloud.ollama("<a target='_blank' href='./Running Ollama in the Cloud.md'>Host Ollama in the Cloud. Click here for more info.</a>") --- ollama.server
-            host.cloud.vllm("<a target='_blank' href='./Running vLLM on a Server.md'>Host vLLM in the Cloud. Click here for more info.</a>") --- vllm.server
-            host.cloud.k8s("<a target='_blank' href='./Running the Kubernetes Stack.md'>We have built out template infrastructure that you can use.</a>") 
+        host.cloud("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20in%20the%20Cloud.md'>Create a new server in your cloud</a>")
+            host.cloud.ollama("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20in%20the%20Cloud.md'>Host Ollama in the Cloud. Click here for more info.</a>") --- ollama.server
+            host.cloud.vllm("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20vLLM%20on%20a%20Server.md'>Host vLLM in the Cloud. Click here for more info.</a>") --- vllm.server
+            host.cloud.k8s("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>We have built out template infrastructure that you can use.</a>") 
 
         host.non-local(You will want to host your LLMs somewhere)
         host.non-local -->
@@ -158,19 +158,19 @@ flowchart TD
             You will then connect that LLM to some tools to help it do things (e.g. edit a word document). That list of tools can change over time very easily.
             TODO
         "}
-        ollama.laptop.download("<a target='_blank' href='./Running Ollama on a Laptop.md'>Download Ollama from https://ollama.com/download - you may need to click 'Download Manually'.<br>For the full walkthrough see the guide.</a>")
+        ollama.laptop.download("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20on%20a%20Laptop.md'>Download Ollama from https://ollama.com/download - you may need to click 'Download Manually'.<br>For the full walkthrough see the guide.</a>")
 
-        ollama.server("<a target='_blank' href='./Running Ollama on a Server.md'>Ollama is very easy to setup on a server.</a>")
+        ollama.server("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20on%20a%20Server.md'>Ollama is very easy to setup on a server.</a>")
     end
 
 
     subgraph Setting up vLLM on a server
-        vllm.server("<a target='_blank' href='./Running vLLM on a Server.md'>vLLM handles multiple LLM requests well, but has some limitations and is harder to setup.</a>")
+        vllm.server("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20vLLM%20on%20a%20Server.md'>vLLM handles multiple LLM requests well, but has some limitations and is harder to setup.</a>")
     end
 
 
     subgraph Setting up our custom LLM infrastructure
-        k8s("<a target='_blank' href='./Running the Kubernetes Stack.md'>See the Kubernetes guide.</a>")
+        k8s("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>See the Kubernetes guide.</a>")
     end
 
 
