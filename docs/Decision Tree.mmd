@@ -1,14 +1,71 @@
 %%{
   init: {
-    "theme": "redux-color",
-    "flowchart": {
-      "curve": "stepBefore"
-    }
+    "theme": "redux-color"
   }
 }%%
 
-
 flowchart TD
+
+    %%%%% CLOUD SERVICE PROVIDER %%%%%
+    csp@{ shape: f-circ, label: "Junction" } -.- csp.start
+    subgraph Cloud Service Provider
+        csp.note@{ shape: comment, label: "
+        We need to figure out who your Cloud Service Provider is.
+        This is who manages things like servers, VPNs, and other services you may use.
+        The definitive way to determine this is to ask someone from IT.
+        You probably are using Azure or AWS.
+        " }
+
+        csp.start(["Remeber where you were in the tree before starting this subgraph. The output of this tree will help you decide where to go from the previous node that brought you here."]) -->
+
+        csp.it-access{Can you just ask someone from IT who your Cloud Service Provider is?}
+            -- yes --> csp.it-access.message("Go ask them what your 'Cloud Service Provider' is? They will probably answer with Azure/AWS/Google Cloud Platform(GCP)/other or tell you everything is self hosted on your own infrastructure. Follow arrows and instructions for whichever provider you use.")
+            -. Azure / AWS / GCP / Self Hosting / Other CSP .-> csp.exit
+        csp.it-access -- no --> csp.workspace{Do you use or see any of the following?}
+            csp.other("For instructions in other flowcharts, follow the 'Other CSP' instructions.") 
+                -. Other CSP .-> csp.exit
+            csp.azure("`You probably use **Microsoft Azure**. Follow arrows and instructions for 'Azure'`") 
+                -. Azure .-> csp.exit
+            csp.gcp("`You probably use **Google Cloud Platform (GCP)**. Follow arrows and instructions for 'GCP' or 'Google Cloud Platform'`")
+                -. GCP .-> csp.exit
+            csp.aws("`You probably use **Amazon Web Services (AWS)**. Follow arrows and instructions for 'AWS' or 'Amazon Web Services'.`")
+                -. AWS .-> csp.exit
+            csp.oracle("`You probably use **Oracle Cloud**.`")
+                --> csp.other
+            csp.digital-ocean("`You probably use **Digital Ocean**.`")
+                --> csp.other
+            csp.linode("`You probably use **Linode**.`")
+                --> csp.other
+            csp.unknown("`It's not clear who your provider is. You can still look through the other flowcharts, just know the final recommendation may be inaccurate.`")
+                --> csp.aws
+
+            csp.selfhost("`You run your own infrastructure. For instructions in other flowcharts, follow the 'Self Hosting' instructions and arrows.`")
+                -. Self Hosting .-> csp.exit
+
+
+
+
+            csp.workspace
+                -- Microsoft Office / Sharepoint --> csp.azure
+            csp.workspace
+                -- "Google Workspace<br>(not just gmail)" --> csp.gcp
+            csp.workspace
+                -- "You use Oracle products" --> csp.oracle
+            csp.workspace
+                -- "You have a server room or a physical server somewhere" --> csp.selfhost
+            csp.workspace
+                -- "You've heard IT people say words like 'AWS', 'EC2', 'S3'" --> csp.aws
+            csp.workspace
+                -- You've heard IT people say 'Digital Ocean' --> csp.digital-ocean
+            csp.workspace
+                -- You've heard IT people say 'Akamai' or 'Linode' --> csp.linode
+            csp.workspace
+                -- "None of the other options" --> csp.unknown
+
+    end
+    csp.exit(["Return to where you were in the flow before coming to this subgraph"]) 
+        -.- csp.exit.junction@{ shape: f-circ, label: "Junction" }
+        %% -.-> csp
 
     is-local{"How do you intend to use LLMs?"}
     %% Are you only using LLMs to process local files? Or would you like to use in workflows ?"}
@@ -29,45 +86,44 @@ flowchart TD
             workflow.employees-have-beefy-laptops -- no --> security.data-type
 
 
-    host(You should run LLMs yourself)
-        host.local("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20on%20a%20Laptop.md'>You and other employees can use Ollama</a>") --> ollama.laptop.download
-        host.machine(Purchase a designated computer to run the LLMs and keep on your office network.)
-            host.machine.ollama("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20on%20a%20Server.md'>Host Ollama on a Server. Click here for more info.</a>") --- ollama.server
-            host.machine.vllm("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20vLLM%20on%20a%20Server.md'>Host vLLM on a Server. Click here for more info.</a>") --- vllm.server
-            host.machine.k8s("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>Host our custom deployment on your own machines</a>") -->
-                host.machine.k8s.purchase("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>You will want to purchase several GPU machines for this.</a>") -->
-                host.machine.k8s.network("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>Put all of the machines on the same network.</a>") --> k8s
-            host.machine --- host.machine.ollama
-            host.machine --- host.machine.vllm
-        host.cloud("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20in%20the%20Cloud.md'>Create a new server in your cloud</a>")
-            host.cloud.ollama("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20in%20the%20Cloud.md'>Host Ollama in the Cloud. Click here for more info.</a>") --- ollama.server
-            host.cloud.vllm("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20vLLM%20on%20a%20Server.md'>Host vLLM in the Cloud. Click here for more info.</a>") --- vllm.server
-            host.cloud.k8s("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>We have built out template infrastructure that you can use.</a>") 
+    %% host(You should run LLMs yourself)
+        host.local("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama.md'>You and other employees can use Ollama on your local computer</a>")
+        host.machine("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Purchasing%20Computers.md'>Purchase a designated computer(s) to run the LLMs and keep on your office network.</a>")
+            host.machine -- ollama --> ollama.server
+            host.machine -- vLLM --> vllm.server
+            host.machine -- kubernetes --> k8s
+        host.cloud("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Hosting%20a%20server%20in%20the%20cloud.md'>Create a new server in your cloud</a>")
+            host.cloud -- ollama --> ollama.server
+            host.cloud -- vLLM --> vllm.server
+            host.cloud -- kubernetes --> k8s
 
         host.non-local(You will want to host your LLMs somewhere)
         host.non-local -->
         host.usage{How many people will be using LLMs?}
         host.usage -- less than 3 or sporadic usage -->
-            host.usage.low(You won't need a lot of new infrastructure to make this happen.) -->
-            host.usage.low.csp.selfhost{"Do you have your own servers? TODO: make single name for this"}
-            host.usage.low.csp.selfhost -.- csp.selfhost
-            host.usage.low.csp.selfhost -- yes --> host.machine
-            host.usage.low.csp.selfhost -- no -->
-                host.usage.low.experiment{Are you looking to experiment first?}
-                host.usage.low.experiment -- experiment for a couple months --> host.cloud
-                host.usage.low.experiment -- I suspect we will use this long term --> host.machine
+            host.usage.small("You won't need much infrastructure, but there's still some setup to do. You can either have someone with a programming background help, or you can probably manage yourself without a programming background by following the step by step guides that follow.") -->
+            host.usage.small.csp.selfhost{"Do you have your own servers? TODO: make single name for this"}
+            host.usage.small.csp.selfhost -.- csp
+            host.usage.small.csp.selfhost -- yes, self hosting -->
+                host.usage.small.csp.selfhost.yes("You are going to need a computer with a GPU, and then follow the 'ollama' arrow to install ollama.") -- ollama --> host.machine
+            host.usage.small.csp.selfhost -- no -->
+                host.usage.small.csp.selfhost.no("You are going to need a server with a GPU in the cloud. Then follow the 'ollama' arrow to install ollama.") -- ollama --> host.cloud
         host.usage -- less than 10 people or consistent usage -->
-            host.usage.medium(You are right between two different sizing strategies) -->
+            host.usage.medium("You won't need much infrastructure, but there's still some setup to do. You can either have someone with a programming background help, or you can probably manage yourself without a programming background by following the step by step guides that follow.") -->
             host.usage.medium.csp.selfhost{"Do you have your own servers? TODO: make single name for this"}
-            host.usage.medium.csp.selfhost -.- csp.selfhost
-            host.usage.medium.csp.selfhost -- yes --> host.machine.vllm
-            host.usage.medium.csp.selfhost -- no --> host.cloud.vllm
+            host.usage.medium.csp.selfhost -.- csp
+            host.usage.medium.csp.selfhost -- yes, self hosting -->
+                host.usage.medium.csp.selfhost.yes("You are going to need a computer with a GPU, and then follow the 'vLLM' arrow to install vLLM on that computer.") -- vLLM --> host.machine
+            host.usage.medium.csp.selfhost -- no -->
+                host.usage.medium.csp.selfhost.no("You are going to need a server in the cloud with a GPU, and then follow the 'vLLM' arrow to install vLLM on that server") -- vLLM --> host.cloud
         host.usage -- more than 10 people or constant usage -->
-            host.usage.high(You will need quite a bit of infrastructure to make this happen)
-            host.usage.hight.csp.selfhost{"Do you have your own servers? TODO: make single name for this"}
-            host.usage.hight.csp.selfhost -.- csp.selfhost
-            host.usage.hight.csp.selfhost -- yes --> host.machine.k8s
-            host.usage.hight.csp.selfhost -- no --> host.cloud.k8s
+            host.usage.high("You will need quite a bit of infrastructure to make this happen. You should have an person with devops experience handle this and should not attempt to do yourself.") -->
+            host.usage.high.csp.selfhost{"Do you have your own servers? TODO: make single name for this"}
+            host.usage.high.csp.selfhost -.- csp
+            host.usage.high.csp.selfhost -- yes, self hosting --> 
+                host.usage.high.csp.selfhost.yes("You are going to need multiple computers with GPUs (start with 2 or 3 and add more as needed). Then follow the 'Kubernetes' arrow to setup the computers") -- kubernetes --> host.machine
+            host.usage.high.csp.selfhost -- no -->
+                host.usage.high.csp.selfhost.no("You are going to need multiple servers with GPUs in the cloud (start with 2). Then follow the 'Kubernetes' arrow to setup the servers.") -- kubernetes --> host.cloud
         host.usage -- not sure, we are a very small jurisdiction -->
             host.usage.small
         host.usage -- not sure, we are a small jurisdiction -->
@@ -75,102 +131,48 @@ flowchart TD
         host.usage -- not sure, we are a large jurisdiction -->
             host.usage.high
 
-    use(You should just use existing infrastructure)
-    use -.- use.openai
-    use -.- use.anthropic
-    use -.- gemini
-    use --- other --->
-    use --- cloud
-        use.openai(OpenAI)
-        use.anthropic(Anthropic)
-        use.gemini(Google Gemini)
-        use.other(Other AI Provider)
-        use.cloud(You should just use a resource from your cloud service provider)
-        use.cloud --- use.cloud.azure
-        use.cloud --- use.cloud.gcp
-        use.cloud --- use.cloud.aws
-        use.cloud --- use.cloud.other
-            use.cloud.azure(Use Microsoft Foundry in Azure)
-            use.cloud.gcp(Use Vertex AI on Google Cloud Platform)
-            use.cloud.aws(Use Amazon Bedrock on Amazon Web Services)
-            use.cloud.other("Use a Cloud Provider like Linode, Digital Ocean, Oracle, IBM, etc.")
+    
+    %%%%% USE CLOUD %%%%%
+    use.cloud(You should just use a resource from your cloud service provider)
+        use.cloud.azure("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Azure%20-%20Microsoft%20Foundry.md'>Use Microsoft Foundry in Azure</a>")
+        use.cloud.gcp("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/GCP%20-%20Vertex%20AI.md'>Use Vertex AI on Google Cloud Platform</a>")
+        use.cloud.aws("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/AWS%20-%20Bedrock.md'>Use Amazon Bedrock on Amazon Web Services</a>")
+        use.cloud.other("Your cloud provider probably doesn't have its own LLM infrastructure. <a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/AWS%20-%20Create%20Account.md'>You can use any of the other options, you will just need to create an account first.</a> Or you can follow instructions for self hosting, which keeps data in your existing infrastructure, but can be more difficult and costly to setup.")
+        use.cloud.self-hosting("You probably aren't setup for LLM infrastructure. <a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/AWS%20-%20Create%20Account.md'>You can use any of the other options, you will just need to create an account first.</a> Or you can follow instructions for self hosting, which allows you to maintain complete control over data, but can be more difficult if you have more than just a few users.")
+        use.cloud -.- csp
+        use.cloud -- Azure --> use.cloud.azure
+        use.cloud -- GCP --> use.cloud.gcp
+        use.cloud -- AWS --> use.cloud.aws
+        use.cloud -- Other CSP --> use.cloud.other
+            use.cloud.other -- Use another Cloud --> use.cloud.aws
+            use.cloud.other -- Self Hosting --> host.usage
+        use.cloud -- Self Hosting --> use.cloud.self-hosting
+            use.cloud.self-hosting -- Use Cloud --> use.cloud.aws
+            use.cloud.self-hosting -- Self Hosting --> host.usage
 
 
-    subgraph Cloud Service Provider
-        csp.note@{ shape: comment, label: "
-        We need to figure out who your Cloud Service Provider is.
-        This is who manages things like servers, VPNs, and other services you may use.
-        The definitive way to determine this is to ask someone from IT.
-        You probably are using Azure or AWS.
-        " }
-
-        csp.it-access{Can you just ask someone from IT?}
-            -- yes --> csp.it-access.message("Go ask them what your 'Cloud Service Provider' is? They will probably answer with Azure/AWS/GCP/other or tell you everything is self hosted.")
-        csp.it-access -- no --> csp.workspace{Do you use or see any of the following?}
-            csp.other("For instructions in other flowcharts, follow the 'Other CSP' instructions.")
-            csp.workspace
-                -- Microsoft Office / Sharepoint --> csp.azure("`You probably use **Microsoft Azure**`")
-            csp.workspace
-                -- "Google Workspace<br>(not just gmail)" --> csp.gcp("`You probably use **Google Cloud Platform (GCP)**`")
-            csp.workspace
-                -- "You use Oracle products" --> csp.oracle("`You probably use **Oracle Cloud**`") --> csp.other
-            csp.workspace
-                -- "You have a server room or a physical server somewhere" --> csp.selfhost("`You run your own infrastructure. For instructions in other flowcharts, follow the 'Self Hosting' instructions.`")
-            csp.workspace
-                -- "You've heard IT people say words like 'AWS', 'EC2', 'S3'" --> csp.aws("`You probably use **Amazon Web Services (AWS)**.`")
-            csp.workspace
-                -- You've heard IT people say 'Digital Ocean' --> csp.digital-ocean("`You probably use **Digital Ocean**`")
-                --> csp.other
-            csp.workspace
-                -- You've heard IT people say 'Akamai' or 'Linode' --> csp.linode("`You probably use **Linode**`")
-                --> csp.other
-            csp.workspace
-                -- "None of the other options" --> csp.unknown("`It's not clear who your provider is. You can still look through the other flowcharts, just know the final recommendation may be inaccurate.`")
-                --> csp.aws
-    end
 
 
-    subgraph Security
-        security.data-type{What kind of data will you be working with or is likely to be used by others}
-            security.data-type -- HIPAA --> security.trust
-            security.data-type -- PII or other sensitive data --> security.trust
-            security.data-type -- Public Data --> use
 
-        security.trust{When it comes to a data breach, which matters more?}
-        security.trust -- not being liable --> use
-        security.trust -- not sure --> host.non-local
-        security.trust -- minimizing harm --> host.non-local
-    end
+    %%%%% SECURITY %%%%%
+    security.data-type{What kind of data will you be working with or is likely to be used by others}
+        security.data-type -- HIPAA --> security.trust
+        security.data-type -- PII or other sensitive data --> security.trust
+        security.data-type -- Public Data --> use.cloud
 
-
-    subgraph Setting up Ollama on your Computer
-        ollama.laptop.note.liability@{ shape: comment, label: "
-            You are liable for your actions.
-        "}
-        ollama.laptop.note.security@{ shape: comment, label: "
-            Security
-            This is the simplest and a very secure approach with restrictions...
-            TODO
-        "}
-        ollama.laptop.note.tooling@{ shape: comment, label: "
-            The general idea is you will have an LLM running on your computer.
-            It will only be able to do what the logged in user has permission to do - and the user will be responsible for its actions.
-            You will then connect that LLM to some tools to help it do things (e.g. edit a word document). That list of tools can change over time very easily.
-            TODO
-        "}
-        ollama.laptop.download("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20on%20a%20Laptop.md'>Download Ollama from https://ollama.com/download - you may need to click 'Download Manually'.<br>For the full walkthrough see the guide.</a>")
-
-        ollama.server("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama%20on%20a%20Server.md'>Ollama is very easy to setup on a server.</a>")
-    end
+    security.trust{When it comes to a data breach, which matters more?}
+    security.trust -- not being liable --> use.cloud
+    security.trust -- not sure --> host.non-local
+    security.trust -- minimizing harm --> host.non-local
 
 
-    subgraph Setting up vLLM on a server
-        vllm.server("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20vLLM%20on%20a%20Server.md'>vLLM handles multiple LLM requests well, but has some limitations and is harder to setup.</a>")
-    end
+
+    ollama.server("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20Ollama.md'>Click here to see how to setup ollama.</a>")
 
 
-    subgraph Setting up our custom LLM infrastructure
-        k8s("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>See the Kubernetes guide.</a>")
-    end
+    vllm.server("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20vLLM%20on%20a%20Server.md'>vLLM handles multiple LLM requests well, but has some limitations and is harder to setup.</a>")
+
+
+    k8s("<a target='_blank' href='https://github.com/TheResilientCollective/Guide-to-LLMs-in-Public-Health/blob/HEAD/docs/Running%20the%20Kubernetes%20Stack.md'>See the Kubernetes guide.</a>")
 
 
